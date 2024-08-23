@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use Response;
 
 class UserController extends Controller
 {
@@ -11,7 +13,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return User::all();
     }
 
     /**
@@ -19,7 +21,19 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {  $valid = $request -> validate([
+            'name' => 'max:35',
+            'email' => 'max:40',
+            'password' => 'max:20'
+    ]);}
+   
+    catch(ValidationException $e){
+        return Response::json(['error' => $e]);
+    }
+    $register = User::create($valid);
+  
+    return Response::json(['register' => $register]);
+
     }
 
     /**

@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Presentes_model;
+use Response;
 
-class presenca extends Controller
+class Presenca extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return Presentes_model::all();
     }
 
     /**
@@ -19,7 +21,17 @@ class presenca extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {  $valid = $request -> validate([
+           
+    ]);}
+   
+    catch(ValidationException $e){
+        return Response::json(['error' => $e]);
+    }
+    $register = Presenca3::create($valid);
+  
+    return Response::json(['register' => $register]);
+
     }
 
     /**

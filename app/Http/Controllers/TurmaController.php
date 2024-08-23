@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Turma_model;
+use Response;
 
 class TurmaController extends Controller
 {
@@ -11,7 +13,7 @@ class TurmaController extends Controller
      */
     public function index()
     {
-        //
+        return Turma::all();
     }
 
     /**
@@ -19,7 +21,20 @@ class TurmaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {  $valid = $request -> validate([
+            'turma_ano',
+            'turma_name'
+
+    ]);}
+   
+    catch(ValidationException $e){
+        return Response::json(['error' => $e]);
+    }
+    $register = User::create($valid);
+  
+   
+    return Response::json(['OK' => 201]);
+
     }
 
     /**
