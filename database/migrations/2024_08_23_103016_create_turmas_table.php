@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('turmas', function (Blueprint $table) {
-            $table->id('turma_id');
-            $table->timestamps();
-            $table->string('turma_name')->nullable(false);
-            $table->string('turma_ano')->nullable(false);
+            $table->id();
+            $table->char('turma_name');
+            $table->integer('turma_ano');
+            $table->string('turma')->nullable();
+            $table->timestamp('created_at')-> nullable();
+            $table->timestamp('updated_at')->nullable();    
         });
     }
 

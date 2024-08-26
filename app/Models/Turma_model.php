@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Turma_model extends Model
 {
     use HasFactory;
@@ -14,10 +15,11 @@ class Turma_model extends Model
      * @var string
      */
     protected $table = 'turmas';
-
+    public $turma = 'turma_name  turma_ano';
     protected $fillable = [
         'turma_name',
-        'turma_ano'
+        'turma_ano',
+        'turma'
     ];
-
+  
 }

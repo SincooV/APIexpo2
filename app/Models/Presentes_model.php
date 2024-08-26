@@ -14,7 +14,7 @@ class Presentes_model extends Model
      *
      * @var string
      */
-    protected $table = 'presenca';
+    protected $table = 'presencazs';
 
     protected $fillable = [
         'user_id',

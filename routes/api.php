@@ -18,3 +18,4 @@ Route::get('/user', function (Request $request) {
 Route::apiResource('/presentes', presenca::class);
 Route::apiResource('/users', UserController::class );
 Route::apiResource('/turmas', TurmaController::class );
+Route::put('/turmas/{id}', [TurmaController::class, 'update']);

@@ -21,16 +21,20 @@ class Presenca extends Controller
      */
     public function store(Request $request)
     {
+ 
         try {  $valid = $request -> validate([
-           
+            'user_id'=> '', 
+            'turma_id'=> ''
+            
     ]);}
    
     catch(ValidationException $e){
         return Response::json(['error' => $e]);
     }
-    $register = Presenca3::create($valid);
+    $register = Presentes_model::create($valid);
   
     return Response::json(['register' => $register]);
+
 
     }
 

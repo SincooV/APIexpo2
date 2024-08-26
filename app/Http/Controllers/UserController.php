@@ -24,7 +24,9 @@ class UserController extends Controller
         try {  $valid = $request -> validate([
             'name' => 'max:35',
             'email' => 'max:40',
-            'password' => 'max:20'
+            'password' => 'max:20',
+            'turma_id'=> ''
+            
     ]);}
    
     catch(ValidationException $e){

@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('presenca', function (Blueprint $table) {
+        Schema::create('presencazs', function (Blueprint $table) {
             $table->id('presenca_id');
             $table->timestamps();
             $table->foreignId('user_id');
             $table->foreignId('turma_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('turma_id')->references('id')->on('turmas')->onDelete('cascade');
+
         });
     }
 
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('presenca');
+        Schema::dropIfExists('presencazs');
     }
 };
