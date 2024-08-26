@@ -28,7 +28,7 @@ class TurmaController extends Controller
             'turma_ano' => 'required|integer',
         ]);
 
-        // Soma dos campos e armazenamento no campo 'resultado_soma'
+        // Soma dos campos e armazenamento no campo 'turma'
         $soma = $validatedData['turma_name'] . $validatedData['turma_ano'];
 
         // Criação do registro na tabela
