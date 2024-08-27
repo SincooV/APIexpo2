@@ -32,6 +32,7 @@ class TurmaController extends Controller
 
         // Soma dos campos e armazenamento no campo 'resultado_soma'
         $soma = $validatedData['turma_name'] . $validatedData['turma_ano'] . $validatedData['ano'];
+        // Soma dos campos e armazenamento no campo 'turma'
 
         // Criação do registro na tabela
         $registro = Turma_model::create([
