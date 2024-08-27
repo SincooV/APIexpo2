@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->char('turma_name');
             $table->integer('turma_ano');
-            $table->string('turma')->nullable();
+            $table->integer('ano');
+            $table->string('turma')->unique();
             $table->timestamp('created_at')-> nullable();
             $table->timestamp('updated_at')->nullable();    
         });

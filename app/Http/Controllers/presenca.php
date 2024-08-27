@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Presentes_model;
 use Response;
-
+use App\Models\User;
+use App\Models\Turma_model;
+use Illuminate\Support\Facades\DB;
 class Presenca extends Controller
 {
     /**
@@ -41,9 +43,28 @@ class Presenca extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $alunos = User::where('id', 'LIKE', '%' . $id . '%')->get();
+
+        $turmas = DB::table('presencazs')
+        ->join('users', 'presencazs.user_id', '=', 'users.id')
+        ->where('users.id', 'LIKE', '%' . $id . '%')
+        ->select('presencazs.*')  // Seleciona todas as colunas da tabela turmas
+        ->get();
+
+        
+    if ($turmas->isEmpty()) {
+        return response()->json([
+            'message' => 'Nenhuma turma encontrada para o aluno especificado.'
+        ], 404);
+    }
+
+    return response()->json([
+        'message' => 'Turmas encontradas.',
+        'data' => $turmas,
+       
+        'aluno' => $alunos]); 
     }
 
     /**
@@ -51,7 +72,19 @@ class Presenca extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+     
+
+        // Encontrar o registro existente
+        $turma = Turma_model::findOrFail($id);
+
+        // Atualização dos campos do registro apenas se estiverem presentes
+        $turma->update($validatedData);
+
+        // Retorno da resposta em JSON
+        return response()->json([
+            'message' => 'Turma atualizada com sucesso.',
+            'data' => $turma
+        ]);
     }
 
     /**

@@ -19,7 +19,8 @@ class Turma_model extends Model
     protected $fillable = [
         'turma_name',
         'turma_ano',
-        'turma'
+        'turma',
+        'ano'
     ];
   
 }

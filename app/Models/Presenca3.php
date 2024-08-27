@@ -18,7 +18,6 @@ class Presenca3 extends Authenticatable
      */
     protected $fillable = [
         'user_id',
-        'turma_id'
     ];
 
 }

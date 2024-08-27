@@ -22,9 +22,9 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {  $valid = $request -> validate([
-            'name' => 'max:35',
-            'email' => 'max:40',
-            'password' => 'max:20',
+            'name' => 'max:35|required',
+            'email' => 'max:40|required',
+            'password' => 'max:20|required',
             'turma_id'=> ''
             
     ]);}
@@ -34,31 +34,99 @@ class UserController extends Controller
     }
     $register = User::create($valid);
   
-    return Response::json(['register' => $register]);
+    return Response::json(['register' => $register , "klebr"]);
 
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $turma = User::find($id);
+        if (!$turma) {
+            return response()->json([
+                'message' => 'turma não encontrada.'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Detalhes da turma.',
+            'data' => $turma
+        ]);   
+    
+
     }
+    public function update(Request $request, $id)
+    {
+        // Validação dos dados recebidos
+        $turma = User::findOrFail($id);
+         $validatedData = $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+            'turma_id'=> 'required'
+         
+         ]);
+         
+
+        
+
+        // Encontrar o registro existente
+      
+
+        // Atualização dos campos do registro
+        $turma->fill($validatedData);
+        $turma->save();
+
+        // Retorno da resposta em JSON
+        return Response::json([
+            'message' => 'atualizada com sucesso.',
+            'data' => $turma
+        ]);
+    }
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function patch(Request $request, $id)
     {
-        //
-    }
+        $validatedData = $request->validate([
+            'turma_id' => 'sometimes|integer',
+        ]);
 
+        // Encontrar o registro existente
+        $turma = User::findOrFail($id);
+
+        // Atualização dos campos do registro apenas se estiverem presentes
+        $turma->update($validatedData);
+
+        // Retorno da resposta em JSON
+        return response()->json([
+            'message' => 'Turma atualizada com sucesso.',
+            'data' => $turma
+        ]);
+   }
+
+  
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $turma = User::find($id);
+
+        if (!$turma) {
+            return response()->json([
+                'message' => 'User não encontrado.'
+            ], 404);
+        }
+
+        $turma->delete();
+
+        return response()->json([
+            'message' => 'User deletado com sucesso.'
+        ]);
     }
 }
