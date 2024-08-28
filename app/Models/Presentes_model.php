@@ -16,6 +16,12 @@ class Presentes_model extends Model
      */
     protected $table = 'presencazs';
 
+        // Define o relacionamento com o modelo User
+        public function user()
+        {
+            return $this->belongsTo(User::class);
+        }
+
     protected $fillable = [
         'user_id',
         'turma_id'

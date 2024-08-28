@@ -50,13 +50,23 @@ class UserController extends Controller
             ], 404);
         }
 
+        $turmas2 = DB::table('users')
+        ->join('turmas', 'users.turma_id', '=', 'turmas.id')
+        ->where('users.id', 'LIKE', '%' . $id . '%')
+        ->select('turmas.*')  // Seleciona todas as colunas da tabela turmas
+        ->get();
+
         return response()->json([
             'message' => 'Detalhes da turma.',
             'data' => $turma
-        ]);   
+
+
+        ]);  
+         
+    }
     
 
-    }
+    
     public function update(Request $request, $id)
     {
         // Validação dos dados recebidos

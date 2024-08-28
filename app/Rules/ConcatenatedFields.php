@@ -16,7 +16,7 @@ class ConcatenatedFields implements Rule
 
     public function passes($attribute, $value)
     {
-        // Concatenate field1 and field2 values and compare with field3
+
         $concatenated = $this->field1Value . $this->field2Value;
         return $value === $concatenated;
     }
