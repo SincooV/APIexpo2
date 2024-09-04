@@ -20,10 +20,6 @@ class Turma extends Authenticatable
         $this->hasMany(User::class);
     }
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+   
 
 }

@@ -10,20 +10,16 @@ use Illuminate\Support\Facades\DB;
 class TurmaController extends Controller
 {
    
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
     {
         return Turma_model::all();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+   
     public function store(Request $request)
     {
-        // Validação dos campos de entrada
+        
         $validatedData = $request->validate([
             'turma_name' => 'required|string',
             'turma_ano' => 'required|integer',
@@ -69,9 +65,7 @@ class TurmaController extends Controller
         
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(string $id)
     {
         $turma = Turma_model::find($id);
