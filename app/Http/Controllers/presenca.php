@@ -10,17 +10,14 @@ use App\Models\Turma_model;
 use Illuminate\Support\Facades\DB;
 class Presenca extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+   
     public function index()
     {
         return Presentes_model::all();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
+     
     public function store(Request $request)
     {
  
@@ -40,22 +37,24 @@ class Presenca extends Controller
 
     }
 
-    /**l
-     * Display the specified resource.
-     */
+
     public function show($id)
     {
    
   
-
-   
-
-    $posts = DB::table('presencazs')
-    ->join('users', 'presencazs.user_id', '=', 'users.id')
-    ->select('presencazs.*', 'users.name as user_name')
+        $results = DB::table('users')
+        ->join('presencazs', 'users.id', '=', 'presencazs.user_id')
+        ->join('turmas', 'users.turma_id', '=', 'turmas.id') 
+        ->where('turmas.turma', $id)
+        ->select('presencazs.*' , 'users.*')
+        ->get();
     
-    ->get();
+       
 
+      
+
+        return Response::json(['alunos' => $results]);
+ 
 
 
     
@@ -70,16 +69,14 @@ class Presenca extends Controller
                     'id_turma' => $post->user->turma_id,
                     'user_name' => $post->user->name,
                  
-                    'user_table' => (new \App\Models\User())->getTable() // nome da tabela do usuário
+                    'user_table' => (new \App\Models\User())->getTable()
                 ];
             })]);
 
 
 
     }
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
      
@@ -87,7 +84,7 @@ class Presenca extends Controller
      
         $turma = Turma_model::findOrFail($id);
 
-        // Atualização dos campos do registro apenas se estiverem presentes
+      
         $turma->update($validatedData);
 
         return response()->json([
@@ -96,11 +93,10 @@ class Presenca extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
+     
     public function destroy(string $id)
     {
-        //
+        
     }
 }

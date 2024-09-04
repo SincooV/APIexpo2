@@ -44,10 +44,6 @@ class TurmaController extends Controller
     }
 
     
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $turma = Turma_model::find($id);
@@ -65,9 +61,7 @@ class TurmaController extends Controller
 
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
         
@@ -94,22 +88,25 @@ class TurmaController extends Controller
             'message' => 'Turma deletada com sucesso.'
         ]);
     }
-    public function searchByTurma(Request $request, $turma)
+    public function searchByTurma($id)
     {
         
-        $resultados = Turma_model::where('turma', $turma)->get();
+        $results = DB::table('turmas')
+             ->join('users', 'turmas.id', '=', 'users.turma_id')
+             ->where('turmas.turma', $id)
+             ->select('turmas.*', 'users.*')
+             ->get();
  
-        if ($resultados->isEmpty()) {
-            return response()->json([
-                'message' => 'Nenhuma turma encontrada com o nome especificado.'
-            ], 404);
-        }
- 
-        return response()->json([
-            'message' => 'Turmas encontradas.',
-            'data' => $resultados
-        ]);
+             return Response::json(['alunos' => $results]);
+                
+
+                
+             
+
     }
+
+        
+    
     public function searchByAluno(Request $request, $id)
     {
                                                                                      
@@ -121,13 +118,14 @@ class TurmaController extends Controller
         ->where('turma', 'LIKE', '%' . $id . '%') 
         ->select('turmas.*')  
         ->get();
-      
+    
 
     if ($turmas->isEmpty()) {
         return response()->json([
             'message' => 'Nenhuma turma encontrada para o aluno especificado.'
         ], 404);
     }
+    
 
     return response()->json([
         'message' => 'Turmas encontradas.',
@@ -135,7 +133,6 @@ class TurmaController extends Controller
         'aluno' => $alunos
         
     ]);
-    }
 }
-    
 
+}

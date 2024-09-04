@@ -9,12 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class Turma_model extends Model
 {
     use HasFactory;
-       /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    public function turma()
+  
+    public function User()
     {
         return $this->belongsTo(User::class);
     }

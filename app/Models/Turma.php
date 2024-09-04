@@ -4,22 +4,21 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\User;
 use Illuminate\Notifications\Notifiable;
 
 class Turma extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+  
     protected $fillable = [
         'turma_name',
         'turma_ano',
     ];
+    public function user(){
+        $this->hasMany(User::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
