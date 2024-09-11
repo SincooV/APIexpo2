@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\Sanctum;
 
 class UserController extends Controller
 {
@@ -30,7 +34,7 @@ class UserController extends Controller
     }
     $register = User::create($valid);
   
-    return Response::json(['register' => $register , "klebr"]);
+    return Response::json(['register' => $register ]);
 
     }
 
@@ -124,6 +128,37 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User deletado com sucesso.'
+        ]);
+
+    }
+    public function login(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (!Auth::attempt($data)) {
+            throw ValidationException::withMessages([
+                'email' => ['Credenciais inválidas.'],
+            ]);
+        }
+
+        $user = Auth::user();
+        $token = $user->createToken('Personal Access Token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login bem-sucedido.',
+            'token' => $token,
+            'user' => $user
+        ]);
+    }
+      public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json([
+            'message' => 'Logout realizado com sucesso.'
         ]);
     }
 }

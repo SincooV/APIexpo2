@@ -10,7 +10,7 @@ class Presentes_model extends Model
     use HasFactory;
 
    
-    protected $table = 'presencazs';
+    protected $table = 'presencas';
 
         public function user()
         {

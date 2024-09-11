@@ -12,9 +12,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         apiPrefix: '/api'
     )
-    ->withMiddleware(function (Middleware $middleware) {
-        //
+      ->withMiddleware(function (Middleware $middleware) {
+        $middleware->api([
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            'throttle:api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]);
     })
+    
+    
     ->withExceptions(function (Exceptions $exceptions) {
         //
+    
     })->create();
+
+   

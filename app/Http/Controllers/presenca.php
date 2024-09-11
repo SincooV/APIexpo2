@@ -8,6 +8,7 @@ use Response;
 use App\Models\User;
 use App\Models\Turma_model;
 use Illuminate\Support\Facades\DB;
+use Log;
 class Presenca extends Controller
 {
    
@@ -43,10 +44,10 @@ class Presenca extends Controller
    
   
         $results = DB::table('users')
-        ->join('presencazs', 'users.id', '=', 'presencazs.user_id')
+        ->join('presencas', 'users.id', '=', 'presencas.user_id')
         ->join('turmas', 'users.turma_id', '=', 'turmas.id') 
         ->where('turmas.turma', $id)
-        ->select('presencazs.*' , 'users.name', 'users.created_at', 'users.updated_at', 'users.email')
+        ->select('presencas.*' , 'users.name', 'users.created_at', 'users.updated_at', 'users.email')
         ->get();
     
        
@@ -64,7 +65,7 @@ class Presenca extends Controller
 
       
         return response()->json([
-            'presencazs' => $posts->map(function ($post, $posts2) {
+            'presencas' => $posts->map(function ($post, $posts2) {
                 return [
                     'id_turma' => $post->user->turma_id,
                     'user_name' => $post->user->name,
@@ -94,9 +95,15 @@ class Presenca extends Controller
     }
 
 
+    
      
     public function destroy(string $id)
     {
         
     }
+
+
+    
+
+    
 }
