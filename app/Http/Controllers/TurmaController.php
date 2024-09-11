@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Turma_model;
 use Response;
-use App\Models\User;
+use App\Http\User;
 use Illuminate\Support\Facades\DB;
 class TurmaController extends Controller
 {
@@ -82,22 +82,18 @@ class TurmaController extends Controller
             'message' => 'Turma deletada com sucesso.'
         ]);
     }
-    public function searchByTurma($id)
-    {
-        
-        $results = DB::table('turmas')
-             ->join('users', 'turmas.id', '=', 'users.turma_id')
-             ->where('turmas.turma', $id)
-             ->select('turmas.*', 'users.*')
-             ->get();
+ public function searchByTurma($id)
+{
+    
+    $results = DB::table('turmas')
+        ->join('users', 'turmas.id', '=', 'users.turma_id')
+        ->where('turmas.turma', $id)
+        ->select('users.id', 'users.name', 'users.email') 
+        ->get();
  
-             return Response::json(['alunos' => $results]);
-                
-
-                
-             
-
-    }
+    
+    return Response::json(['alunos' => $results]);
+}
 
         
     

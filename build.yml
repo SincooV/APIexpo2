@@ -1,0 +1,127 @@
+name: Docker Build
+
+on:
+    schedule:
+        -   cron: 17 4 * * *
+    push:
+        branches:
+            - main
+        tags:
+            - v*
+    workflow_dispatch:
+
+env:
+    DOCKER_IMAGE: helldar/laravel-gitlab-ci
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                php_version: [ 8.1.29, 8.2.21, 8.3.9, latest ]
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+
+            -   name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v3
+
+            -   name: Login to DockerHub
+                uses: docker/login-action@v3
+                with:
+                    username: ${{ secrets.DOCKERHUB_USERNAME }}
+                    password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            -   name: Get the version
+                id: get_version
+                run: |
+                    VERSION=${{ matrix.php_version }}
+                    PREFIX="edge-"
+                    SUFFIX="-alpine"
+                    LATEST_TAG=edge
+                    LATEST_TAGS="${DOCKER_IMAGE}:edge,${DOCKER_IMAGE}:unstable"
+
+                    if [[ $VERSION == "latest" ]]; then
+                        SUFFIX=""
+                    fi
+
+                    if [[ $GITHUB_REF == refs/tags/* && ${VERSION:5:5} != "alpha" && ${VERSION:5:4} != "beta" && ${VERSION:5:2} != "rc" ]]; then
+                        PREFIX=""
+                        LATEST_TAG=stable
+                        LATEST_TAGS="${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:stable"
+                    fi
+
+                    echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
+                    echo "suffix=${SUFFIX}" >> "$GITHUB_OUTPUT"
+                    echo "minor_version=${VERSION:0:3}" >> "$GITHUB_OUTPUT"
+                    echo "full_version=${VERSION}" >> "$GITHUB_OUTPUT"
+                    echo "latest_tag=${LATEST_TAG}" >> "$GITHUB_OUTPUT"
+                    echo "latest_tags=${LATEST_TAGS}" >> "$GITHUB_OUTPUT"
+
+            -   name: Prepare
+                id: prepare
+                env:
+                    SHORT_PHP_VERSION: ${{ steps.get_version.outputs.minor_version }}
+                    FULL_PHP_VERSION: ${{ steps.get_version.outputs.full_version }}
+                run: |
+                    echo "docker_image=${DOCKER_IMAGE}" >> "$GITHUB_OUTPUT"
+                    echo "minor_version=${SHORT_PHP_VERSION}" >> "$GITHUB_OUTPUT"
+                    echo "patch_version=${FULL_PHP_VERSION}" >> "$GITHUB_OUTPUT"
+
+            -   name: Build and Push (latest)
+                if: success() && matrix.php_version == 'latest'
+                uses: docker/build-push-action@v6
+                with:
+                    context: .
+                    file: ./Dockerfile
+                    push: true
+                    tags: ${{ steps.get_version.outputs.latest_tags }}
+                    build-args: |
+                        VERSION=${{ steps.get_version.outputs.latest_tag }}
+                        SHORT_PHP_VERSION=alpine
+                        FULL_PHP_VERSION=alpine
+                        BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+                        VCS_REF=${GITHUB_SHA::8}
+
+            -   name: Build and Push (version)
+                if: success() && matrix.php_version != 'latest'
+                uses: docker/build-push-action@v6
+                with:
+                    context: .
+                    file: ./Dockerfile
+                    push: true
+                    tags: |
+                        ${{ steps.prepare.outputs.docker_image }}:${{ steps.get_version.outputs.prefix }}${{ steps.prepare.outputs.minor_version }}
+                        ${{ steps.prepare.outputs.docker_image }}:${{ steps.get_version.outputs.prefix }}${{ steps.prepare.outputs.patch_version }}
+                    build-args: |
+                        VERSION=${{ steps.get_version.outputs.prefix }}${{ steps.prepare.outputs.patch_version }}
+                        SHORT_PHP_VERSION=${{ steps.prepare.outputs.minor_version }}
+                        FULL_PHP_VERSION=${{ steps.prepare.outputs.patch_version }}${{ steps.get_version.outputs.suffix }}
+                        BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+                        VCS_REF=${GITHUB_SHA::8}
+
+            -   name: Inspect (latest)
+                if: success() && matrix.php_version == 'latest'
+                run: docker buildx imagetools inspect ${{ steps.prepare.outputs.docker_image }}:${{ steps.get_version.outputs.latest_tag }}
+
+            -   name: Inspect (version)
+                if: success() && matrix.php_version != 'latest'
+                run: |
+                    docker buildx imagetools inspect ${{ steps.prepare.outputs.docker_image }}:${{ steps.get_version.outputs.prefix }}${{ steps.prepare.outputs.minor_version }}
+                    docker buildx imagetools inspect ${{ steps.prepare.outputs.docker_image }}:${{ steps.get_version.outputs.prefix }}${{ steps.prepare.outputs.patch_version }}
+
+    description:
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+
+            -   name: Update repo description
+                uses: peter-evans/dockerhub-description@v4
+                with:
+                    username: ${{ secrets.DOCKERHUB_USERNAME }}
+                    password: ${{ secrets.DOCKERHUB_PASSWORD }}
+                    repository: helldar/laravel-gitlab-ci

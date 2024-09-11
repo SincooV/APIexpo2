@@ -82,7 +82,7 @@ class UserController extends Controller
 
 
         return Response::json([
-            'message' => 'atualizada com sucesso.',
+            'message' => 'user atualizado com sucesso.',
             'data' => $turma
         ]);
     }

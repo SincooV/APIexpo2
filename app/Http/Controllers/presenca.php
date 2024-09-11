@@ -46,7 +46,7 @@ class Presenca extends Controller
         ->join('presencazs', 'users.id', '=', 'presencazs.user_id')
         ->join('turmas', 'users.turma_id', '=', 'turmas.id') 
         ->where('turmas.turma', $id)
-        ->select('presencazs.*' , 'users.*')
+        ->select('presencazs.*' , 'users.name', 'users.created_at', 'users.updated_at', 'users.email')
         ->get();
     
        
