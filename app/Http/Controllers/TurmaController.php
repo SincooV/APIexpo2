@@ -88,7 +88,7 @@ class TurmaController extends Controller
     $results = DB::table('turmas')
         ->join('users', 'turmas.id', '=', 'users.turma_id')
         ->where('turmas.turma', $id)
-        ->select('users.id', 'users.name', 'users.email') 
+        ->select('users.id', 'users.name', 'users.email' , 'users.created_at', 'users.updated_at') 
         ->get();
  
     
